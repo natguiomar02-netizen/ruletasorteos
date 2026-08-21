@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ruleta de sorteos online gratis | Elige ganador, forma equipos, tira moneda y dados</title>
+<meta name="description" content="Ruleta para elegir un ganador, sorteo de premios, formación de equipos al azar, cara o cruz y dados. Gratis, sin registro, todo funciona en tu navegador.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=50 cy=50 r=46 fill=%22%23120F26%22/><circle cx=50 cy=50 r=46 fill=none stroke=%22%23F6B93D%22 stroke-width=6/><path d=%22M50 6 A44 44 0 0 1 88 66 L50 50 Z%22 fill=%22%23FF6B6B%22/><path d=%22M88 66 A44 44 0 0 1 22 90 L50 50 Z%22 fill=%22%233FE0C5%22/><path d=%22M22 90 A44 44 0 0 1 12 34 L50 50 Z%22 fill=%22%239D7BFF%22/><path d=%22M12 34 A44 44 0 0 1 50 6 L50 50 Z%22 fill=%22%23F6B93D%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Ruleta de Sorteos","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (navegador web)","description":"Ruleta para elegir un ganador al azar, sortear premios, formar equipos, lanzar una moneda o dados.","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"}}
+</script>
+<!-- Google AdSense: sustituye ca-pub-XXXXXXXXXXXXXXXX por tu ID real en esta línea y en los bloques <ins> de más abajo -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+<style>
+  :root{
+    --bg:#120F26;
+    --bg-soft:#1B1740;
+    --surface:#211C4A;
+    --surface-2:#2A2458;
+    --ink:#F4F1FF;
+    --ink-dim:#A79FD6;
+    --ink-faint:#8178AD;
+    --gold:#F6B93D;
+    --coral:#FF6B6B;
+    --teal:#3FE0C5;
+    --violet:#9D7BFF;
+    --line:rgba(244,241,255,.12);
+    --radius:20px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, #2A2360 0%, transparent 60%),
+      radial-gradient(1000px 500px at 110% 10%, #23205a 0%, transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  a{color:var(--gold);}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px;}
+  button{font-family:inherit;}
+  ::selection{background:var(--gold);color:#181235;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:2px;}
+
+  /* ---------- header ---------- */
+  header.site{padding:22px 0 6px;}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk';font-weight:700;font-size:1.05rem;letter-spacing:.01em;}
+  .brand .dot{width:28px;height:28px;border-radius:50%;background:conic-gradient(var(--coral),var(--teal),var(--violet),var(--gold),var(--coral));flex:none;box-shadow:0 0 0 3px var(--bg-soft);}
+
+  /* ---------- hero ---------- */
+  .hero{padding:26px 0 8px;text-align:center;}
+  .hero h1{font-size:clamp(1.7rem,4.4vw,2.7rem);font-weight:700;margin:0 0 10px;letter-spacing:-.01em;}
+  .hero h1 span{color:var(--gold);}
+  .hero p{color:var(--ink-dim);max-width:560px;margin:0 auto;font-size:1.02rem;}
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:26px 0 22px;padding:0 10px;}
+  .tab{
+    appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink-dim);
+    padding:11px 18px;border-radius:999px;font-weight:600;font-size:.92rem;cursor:pointer;
+    display:flex;align-items:center;gap:8px;transition:transform .15s ease,background .15s ease,color .15s ease,border-color .15s ease;
+  }
+  .tab:hover{transform:translateY(-1px);border-color:var(--ink-faint);}
+  .tab[aria-selected="true"]{background:var(--gold);color:#221806;border-color:var(--gold);}
+  .tab .ic{font-size:1.05rem;}
+
+  /* ---------- ticket card (signature motif) ---------- */
+  .ticket{
+    position:relative;background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--radius);padding:30px;
+  }
+  .ticket::before,.ticket::after{
+    content:"";position:absolute;top:50%;transform:translateY(-50%);
+    width:26px;height:26px;border-radius:50%;background:var(--bg);
+  }
+  .ticket::before{left:-13px;}
+  .ticket::after{right:-13px;}
+  .ticket .stub{position:absolute;top:0;bottom:0;left:78px;border-left:2px dashed var(--line);display:none;}
+
+  panel{display:block;}
+  .panel{display:none;}
+  .panel.active{display:block;animation:fadeIn .25s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .tool-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:26px;align-items:start;}
+  @media (max-width:820px){.tool-grid{grid-template-columns:1fr;}}
+
+  label.field-label{display:block;font-weight:600;font-size:.85rem;color:var(--ink-dim);margin:0 0 8px;text-transform:uppercase;letter-spacing:.06em;}
+  textarea, input[type=number]{
+    width:100%;background:var(--surface-2);border:1px solid var(--line);color:var(--ink);
+    border-radius:12px;padding:12px 14px;font-family:inherit;font-size:.95rem;resize:vertical;
+  }
+  textarea{min-height:150px;line-height:1.6;}
+  textarea:focus, input:focus{border-color:var(--teal);}
+  .hint{font-size:.82rem;color:var(--ink-faint);margin-top:8px;}
+  .row-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+
+  .btn{
+    appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:12px;
+    padding:11px 18px;font-size:.92rem;transition:transform .15s ease,filter .15s ease;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--gold);color:#221806;}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed;filter:none;}
+  .btn-ghost{background:transparent;color:var(--ink-dim);border:1px solid var(--line);}
+  .btn-ghost:hover{color:var(--ink);border-color:var(--ink-faint);}
+  .btn-lg{padding:16px 30px;font-size:1.05rem;border-radius:14px;}
+
+  .check-row{display:flex;align-items:flex-start;gap:10px;margin-top:16px;font-size:.88rem;color:var(--ink-dim);}
+  .check-row input{margin-top:3px;}
+
+  /* ---------- wheel ---------- */
+  .wheel-stage{position:relative;display:flex;flex-direction:column;align-items:center;gap:18px;}
+  .wheel-box{position:relative;width:100%;max-width:380px;}
+  .wheel-box canvas{width:100%;height:auto;display:block;filter:drop-shadow(0 18px 34px rgba(0,0,0,.45));}
+  .pointer{
+    position:absolute;top:-4px;left:50%;transform:translateX(-50%);
+    width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;
+    border-top:28px solid var(--coral);z-index:5;filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));
+  }
+  .hub-count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+  confetti-canvas{}
+  .confetti-canvas{position:absolute;inset:-40px -40px auto -40px;height:520px;pointer-events:none;z-index:6;}
+
+  .winner-banner{
+    width:100%;max-width:380px;background:var(--surface-2);border:1px solid var(--gold);
+    border-radius:16px;padding:16px 18px;text-align:center;display:none;
+  }
+  .winner-banner.show{display:block;animation:popIn .35s cubic-bezier(.2,1.4,.4,1);}
+  @keyframes popIn{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
+  .winner-banner .lbl{font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-faint);}
+  .winner-banner .name{font-family:'Space Grotesk';font-weight:700;font-size:1.5rem;color:var(--gold);margin-top:2px;word-break:break-word;}
+
+  .history{margin-top:6px;font-size:.85rem;color:var(--ink-dim);}
+  .history ol{margin:8px 0 0;padding-left:20px;}
+  .history li{margin-bottom:3px;}
+
+  .msg{font-size:.86rem;padding:10px 12px;border-radius:10px;margin-top:10px;display:none;}
+  .msg.show{display:block;}
+  .msg.warn{background:rgba(255,107,107,.12);color:#ffb3b3;border:1px solid rgba(255,107,107,.3);}
+
+  /* ---------- teams ---------- */
+  .mode-toggle{display:flex;gap:8px;margin-bottom:14px;}
+  .mode-toggle label{flex:1;position:relative;}
+  .mode-toggle input{position:absolute;opacity:0;}
+  .mode-toggle span{
+    display:block;text-align:center;padding:9px;border-radius:10px;border:1px solid var(--line);
+    color:var(--ink-dim);font-size:.85rem;font-weight:600;cursor:pointer;
+  }
+  .mode-toggle input:checked + span{background:var(--teal);color:#0d2d29;border-color:var(--teal);}
+  .num-row{display:flex;align-items:center;gap:12px;margin-top:14px;}
+  .num-row input{width:90px;}
+
+  .teams-out{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:6px;}
+  .team-card{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:16px;}
+  .team-card .badge{
+    display:inline-block;font-family:'Space Grotesk';font-weight:700;font-size:.78rem;
+    background:var(--violet);color:#1c1240;padding:3px 10px;border-radius:999px;margin-bottom:10px;
+  }
+  .team-card ol{margin:0;padding-left:20px;font-size:.92rem;color:var(--ink);}
+  .team-card li{margin-bottom:4px;}
+  .team-card:nth-child(4n+2) .badge{background:var(--coral);color:#3a0e0e;}
+  .team-card:nth-child(4n+3) .badge{background:var(--teal);color:#0d2d29;}
+  .team-card:nth-child(4n+4) .badge{background:var(--gold);color:#221806;}
+
+  /* ---------- coin ---------- */
+  .coin-stage{display:flex;flex-direction:column;align-items:center;gap:22px;padding:10px 0;}
+  .coin-scene{perspective:1000px;width:180px;height:180px;}
+  .coin{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 2.2s cubic-bezier(.2,.7,.2,1);}
+  .coin .face{
+    position:absolute;inset:0;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk';font-weight:700;font-size:1.15rem;backface-visibility:hidden;
+    border:6px solid rgba(0,0,0,.15);box-shadow:inset 0 0 0 3px rgba(255,255,255,.18), 0 14px 30px rgba(0,0,0,.4);
+  }
+  .coin .face.heads{background:linear-gradient(145deg,#ffd876,var(--gold));color:#241804;}
+  .coin .face.tails{background:linear-gradient(145deg,#ff9a9a,var(--coral));color:#340c0c;transform:rotateY(180deg);}
+  .tally{display:flex;gap:22px;}
+  .tally div{text-align:center;}
+  .tally .n{font-family:'Space Grotesk';font-size:1.5rem;font-weight:700;}
+  .tally .l{font-size:.78rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;}
+
+  /* ---------- dice ---------- */
+  .dice-stage{display:flex;flex-direction:column;align-items:center;gap:20px;padding:10px 0;}
+  .dice-count-row{display:flex;align-items:center;gap:10px;}
+  .dice-tray{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;min-height:96px;align-items:center;}
+  .die{
+    width:78px;height:78px;border-radius:16px;background:linear-gradient(155deg,var(--surface-2),var(--surface));
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:2.4rem;
+    box-shadow:0 10px 22px rgba(0,0,0,.35);
+  }
+  .die.rolling{animation:shake .5s ease;}
+  @keyframes shake{
+    0%,100%{transform:rotate(0deg) scale(1);}
+    20%{transform:rotate(-14deg) scale(1.05);}
+    40%{transform:rotate(10deg) scale(.98);}
+    60%{transform:rotate(-8deg) scale(1.04);}
+    80%{transform:rotate(6deg) scale(1);}
+  }
+  .dice-total{font-family:'Space Grotesk';font-size:1.1rem;color:var(--ink-dim);}
+  .dice-total b{color:var(--gold);font-size:1.3rem;}
+
+  /* ---------- info sections ---------- */
+  .ad-unit{margin-top:20px;text-align:center;}
+  .ad-unit:empty{margin:0;}
+  .privacy-badge{
+    display:flex;gap:10px;align-items:flex-start;background:rgba(63,224,197,.08);
+    border:1px solid rgba(63,224,197,.28);color:#bdf5ea;padding:12px 14px;border-radius:12px;
+    font-size:.85rem;margin-top:20px;
+  }
+  section.info{margin-top:64px;}
+  section.info h2{font-size:1.4rem;margin-bottom:14px;}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:10px;}
+  @media (max-width:720px){.steps{grid-template-columns:1fr;}}
+  .step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;}
+  .step .num{font-family:'Space Grotesk';color:var(--gold);font-weight:700;font-size:.85rem;}
+  .step h3{margin:6px 0 6px;font-size:1rem;}
+  .step p{margin:0;color:var(--ink-dim);font-size:.9rem;}
+  .seo-copy{color:var(--ink-dim);font-size:.96rem;max-width:760px;}
+  .seo-copy p{margin:0 0 14px;}
+
+  details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+  details summary{cursor:pointer;font-weight:600;font-size:.96rem;}
+  details p{color:var(--ink-dim);margin:10px 0 0;font-size:.9rem;}
+
+  footer{margin:70px 0 30px;text-align:center;color:var(--ink-faint);font-size:.82rem;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms !important;transition-duration:.01ms !important;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> Ruleta &amp; Sorteos</div>
+  </div>
+</header>
+
+<div class="hero wrap">
+  <h1>Elige un <span>ganador</span>, forma equipos y decide al azar</h1>
+  <p>Cuatro herramientas gratis para clases, sorteos, streams y noches de juego. Todo se ejecuta en tu navegador: nada se sube ni se guarda en ningún servidor.</p>
+</div>
+
+<div class="wrap">
+  <div class="tabs" role="tablist" aria-label="Herramientas de sorteo">
+    <button class="tab" role="tab" data-tab="ruleta" aria-selected="true"><span class="ic">🎡</span> Ruleta</button>
+    <button class="tab" role="tab" data-tab="equipos" aria-selected="false"><span class="ic">👥</span> Equipos</button>
+    <button class="tab" role="tab" data-tab="moneda" aria-selected="false"><span class="ic">🪙</span> Cara o cruz</button>
+    <button class="tab" role="tab" data-tab="dados" aria-selected="false"><span class="ic">🎲</span> Dados</button>
+  </div>
+
+  <!-- ===== RULETA ===== -->
+  <section class="panel active" id="panel-ruleta" role="tabpanel">
+    <div class="ticket">
+      <div class="tool-grid">
+        <div>
+          <label class="field-label" for="wheel-input">Participantes (uno por línea)</label>
+          <textarea id="wheel-input" spellcheck="false"></textarea>
+          <div class="hint">Repite un nombre varias veces para darle más probabilidad. <span id="wheel-count">0 participantes</span></div>
+          <div class="row-btns">
+            <button class="btn btn-ghost" id="wheel-example">Rellenar ejemplo</button>
+            <button class="btn btn-ghost" id="wheel-clear">Vaciar</button>
+            <button class="btn btn-ghost" id="wheel-update">Actualizar ruleta</button>
+          </div>
+          <label class="check-row">
+            <input type="checkbox" id="wheel-eliminate">
+            <span>Quitar al ganador después de cada giro — ideal para repartir varios premios seguidos.</span>
+          </label>
+          <div class="msg warn" id="wheel-msg"></div>
+          <div class="history" id="wheel-history" style="display:none;">
+            <strong>Historial de ganadores</strong>
+            <ol id="wheel-history-list"></ol>
+          </div>
+        </div>
+
+        <div class="wheel-stage">
+          <div class="wheel-box">
+            <div class="pointer" aria-hidden="true"></div>
+            <canvas id="wheel-canvas" width="760" height="760"></canvas>
+            <canvas id="confetti-canvas" class="confetti-canvas" width="900" height="900" aria-hidden="true"></canvas>
+          </div>
+          <button class="btn btn-primary btn-lg" id="wheel-spin">🎡 Girar la ruleta</button>
+          <div class="winner-banner" id="wheel-winner">
+            <div class="lbl">Ganador</div>
+            <div class="name" id="wheel-winner-name">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="privacy-badge">🔒 <span>Tus listas de nombres no se envían a ningún servidor: todo el sorteo se calcula en tu propio navegador.</span></div>
+      <div class="ad-unit">
+        <!-- Sustituye ca-pub-XXXXXXXXXXXXXXXX y data-ad-slot por los valores reales que te da AdSense -->
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="0000000000" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== EQUIPOS ===== -->
+  <section class="panel" id="panel-equipos" role="tabpanel">
+    <div class="ticket">
+      <div class="tool-grid">
+        <div>
+          <label class="field-label" for="teams-input">Participantes (uno por línea)</label>
+          <textarea id="teams-input" spellcheck="false"></textarea>
+          <div class="hint"><span id="teams-count">0 participantes</span></div>
+
+          <div class="mode-toggle" style="margin-top:16px;">
+            <label><input type="radio" name="teams-mode" value="count" checked><span>Nº de equipos</span></label>
+            <label><input type="radio" name="teams-mode" value="size"><span>Personas por equipo</span></label>
+          </div>
+          <div class="num-row">
+            <input type="number" id="teams-num" min="2" value="2">
+            <span class="hint" id="teams-num-hint" style="margin:0;">equipos en total</span>
+          </div>
+
+          <div class="row-btns">
+            <button class="btn btn-ghost" id="teams-example">Rellenar ejemplo</button>
+            <button class="btn btn-ghost" id="teams-clear">Vaciar</button>
+            <button class="btn btn-primary" id="teams-shuffle">🔀 Formar equipos</button>
+          </div>
+          <div class="msg warn" id="teams-msg"></div>
+        </div>
+
+        <div>
+          <label class="field-label">Resultado</label>
+          <div class="teams-out" id="teams-out">
+            <div class="hint">Pulsa «Formar equipos» para repartir a los participantes al azar.</div>
+          </div>
+        </div>
+      </div>
+      <div class="privacy-badge">🔒 <span>El reparto de equipos se hace al instante en tu dispositivo, sin guardar datos.</span></div>
+    </div>
+  </section>
+
+  <!-- ===== MONEDA ===== -->
+  <section class="panel" id="panel-moneda" role="tabpanel">
+    <div class="ticket" style="text-align:center;">
+      <div class="coin-stage">
+        <div class="coin-scene">
+          <div class="coin" id="coin">
+            <div class="face heads">CARA</div>
+            <div class="face tails">CRUZ</div>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg" id="coin-flip">🪙 Lanzar moneda</button>
+        <div class="tally">
+          <div><div class="n" id="coin-heads">0</div><div class="l">Caras</div></div>
+          <div><div class="n" id="coin-tails">0</div><div class="l">Cruces</div></div>
+        </div>
+        <button class="btn btn-ghost" id="coin-reset">Reiniciar contador</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DADOS ===== -->
+  <section class="panel" id="panel-dados" role="tabpanel">
+    <div class="ticket" style="text-align:center;">
+      <div class="dice-stage">
+        <div class="dice-count-row">
+          <label class="field-label" for="dice-num" style="margin:0;">Nº de dados</label>
+          <input type="number" id="dice-num" min="1" max="6" value="2" style="width:80px;">
+        </div>
+        <div class="dice-tray" id="dice-tray"></div>
+        <div class="dice-total" id="dice-total">Suma: <b>—</b></div>
+        <button class="btn btn-primary btn-lg" id="dice-roll">🎲 Lanzar dados</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== INFO / SEO ===== -->
+  <section class="info">
+    <h2>Cómo funciona</h2>
+    <div class="steps">
+      <div class="step"><div class="num">01</div><h3>Escribe tu lista</h3><p>Añade nombres, opciones o premios, uno por línea. No hace falta registrarse ni instalar nada.</p></div>
+      <div class="step"><div class="num">02</div><h3>Gira, sortea o reparte</h3><p>La ruleta, la moneda y los dados usan el generador de números aleatorios del propio navegador.</p></div>
+      <div class="step"><div class="num">03</div><h3>Usa el resultado</h3><p>Repite tantas veces como quieras: para varios premios, activa «quitar al ganador» y sigue girando.</p></div>
+    </div>
+  </section>
+
+  <div class="ad-unit">
+    <!-- Sustituye ca-pub-XXXXXXXXXXXXXXXX y data-ad-slot por los valores reales que te da AdSense -->
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="0000000001" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+
+  <section class="info seo-copy">
+    <h2>Una ruleta para (casi) cualquier sorteo</h2>
+    <p>Esta ruleta de la fortuna online sirve para elegir un ganador entre varias opciones de forma justa y aleatoria: sortear un premio entre tus seguidores, decidir quién empieza a jugar, elegir un destino de viaje o simplemente romper un empate. Escribe cada opción en una línea, gira la ruleta y el resultado se decide con un número aleatorio calculado en tu propio navegador — nadie más puede ver ni manipular tu lista.</p>
+    <p>El formador de equipos reparte a un grupo de personas en equipos equilibrados al azar, útil para clases, torneos deportivos, quinielas de oficina o juegos de mesa por equipos. Puedes elegir cuántos equipos quieres o cuántas personas debe tener cada uno, y la herramienta hace el reparto justo mezclando la lista antes de repartirla.</p>
+    <p>Cara o cruz y los dados completan el kit para decisiones rápidas: perfectos cuando solo necesitas una respuesta de sí o no, o un número del 1 al 6 para un juego de mesa.</p>
+  </section>
+
+  <section class="info">
+    <h2>Preguntas frecuentes</h2>
+    <details><summary>¿Es un sorteo aleatorio de verdad?</summary><p>Sí. La ruleta y los dados usan el generador de números aleatorios integrado en tu navegador para decidir el resultado en el momento de girar, no antes.</p></details>
+    <details><summary>¿Puedo dar más probabilidad a alguien?</summary><p>Sí: escribe su nombre varias veces en la lista. Cada línea cuenta como una entrada independiente.</p></details>
+    <details><summary>¿Cuántos nombres admite la ruleta?</summary><p>Funciona bien hasta unas 40-50 entradas; con más, las etiquetas empiezan a quedar muy pequeñas para leerse.</p></details>
+    <details><summary>¿Se guardan mis listas en algún sitio?</summary><p>No. Todo el cálculo ocurre en tu dispositivo y las listas desaparecen al recargar la página; no se envían a ningún servidor.</p></details>
+    <details><summary>¿Puedo usarla para repartir varios premios?</summary><p>Sí: activa la opción «Quitar al ganador después de cada giro» en la pestaña Ruleta y sigue girando; el historial de ganadores queda registrado debajo.</p></details>
+    <details><summary>¿El reparto de equipos es realmente equilibrado?</summary><p>La herramienta mezcla la lista al azar y reparte por turnos, así que el número de personas por equipo queda lo más igualado posible; quién queda con quién sí es aleatorio.</p></details>
+  </section>
+</div>
+
+<footer>
+  Hecha para clases, sorteos y noches de juego · Ningún dato sale de tu navegador
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(sel, scope){ return (scope||document).querySelector(sel); };
+  var $$ = function(sel, scope){ return Array.prototype.slice.call((scope||document).querySelectorAll(sel)); };
+  var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------------- tabs ---------------- */
+  var tabs = $$('.tab');
+  var panels = {
+    ruleta: $('#panel-ruleta'),
+    equipos: $('#panel-equipos'),
+    moneda: $('#panel-moneda'),
+    dados: $('#panel-dados')
+  };
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      tabs.forEach(function(t){ t.setAttribute('aria-selected','false'); });
+      tab.setAttribute('aria-selected','true');
+      Object.keys(panels).forEach(function(k){ panels[k].classList.remove('active'); });
+      panels[tab.dataset.tab].classList.add('active');
+    });
+  });
+
+  /* ================= RULETA ================= */
+  var PALETTE = ['#F6B93D','#FF6B6B','#3FE0C5','#9D7BFF','#6BCB77','#4D96FF','#F783AC','#FFA94D'];
+  var wheelInput = $('#wheel-input');
+  var wheelCanvas = $('#wheel-canvas');
+  var ctx = wheelCanvas.getContext('2d');
+  var confettiCanvas = $('#confetti-canvas');
+  var cctx = confettiCanvas.getContext('2d');
+  var wheelCountEl = $('#wheel-count');
+  var wheelMsg = $('#wheel-msg');
+  var spinBtn = $('#wheel-spin');
+  var winnerBanner = $('#wheel-winner');
+  var winnerNameEl = $('#wheel-winner-name');
+  var historyBox = $('#wheel-history');
+  var historyList = $('#wheel-history-list');
+  var eliminateBox = $('#wheel-eliminate');
+
+  var entries = [];
+  var rotation = 0; // degrees, grows continuously
+  var spinning = false;
+  var winnersLog = [];
+
+  function parseLines(text){
+    return text.split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+  }
+
+  function showMsg(el, text){
+    if(!text){ el.classList.remove('show'); el.textContent=''; return; }
+    el.textContent = text; el.classList.add('show');
+  }
+
+  function syncWheelFromInput(){
+    entries = parseLines(wheelInput.value);
+    wheelCountEl.textContent = entries.length + (entries.length===1 ? ' participante' : ' participantes');
+    winnerBanner.classList.remove('show');
+    drawWheel(rotation);
+    showMsg(wheelMsg,'');
+  }
+
+  function drawWheel(rotDeg){
+    var W = wheelCanvas.width, H = wheelCanvas.height;
+    var cx = W/2, cy = H/2, r = W/2 - 10;
+    ctx.clearRect(0,0,W,H);
+
+    var n = entries.length;
+    if(n === 0){
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.fillStyle = '#2A2458'; ctx.fill();
+      ctx.fillStyle = '#A79FD6'; ctx.font = '600 30px Inter, sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('Añade participantes', cx, cy);
+      return;
+    }
+
+    var sliceRad = (Math.PI*2)/n;
+    var rotRad = rotDeg * Math.PI/180;
+
+    for(var i=0;i<n;i++){
+      var start = i*sliceRad + rotRad;
+      var end = (i+1)*sliceRad + rotRad;
+      ctx.beginPath();
+      ctx.moveTo(cx,cy);
+      ctx.arc(cx,cy,r,start,end);
+      ctx.closePath();
+      ctx.fillStyle = PALETTE[i % PALETTE.length];
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(18,15,38,0.55)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // label
+      ctx.save();
+      ctx.translate(cx,cy);
+      ctx.rotate(start + sliceRad/2);
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#1B1332';
+      var fontSize = n > 22 ? 20 : (n > 12 ? 26 : 32);
+      ctx.font = '700 ' + fontSize + 'px "Space Grotesk", sans-serif';
+      var label = entries[i];
+      var maxChars = n > 22 ? 10 : 16;
+      if(label.length > maxChars) label = label.slice(0, maxChars-1) + '…';
+      ctx.fillText(label, r - 26, 0);
+      ctx.restore();
+    }
+
+    // hub
+    ctx.beginPath();
+    ctx.arc(cx,cy,r*0.14,0,Math.PI*2);
+    ctx.fillStyle = '#F4F1FF';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx,cy,r*0.14,0,Math.PI*2);
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = '#120F26';
+    ctx.stroke();
+  }
+
+  function launchConfetti(){
+    if(reduced) return;
+    var W = confettiCanvas.width, H = confettiCanvas.height;
+    var particles = [];
+    var colors = PALETTE;
+    for(var i=0;i<110;i++){
+      particles.push({
+        x: W/2 + (Math.random()-0.5)*120,
+        y: H*0.28,
+        vx: (Math.random()-0.5)*9,
+        vy: -6 - Math.random()*6,
+        g: 0.28 + Math.random()*0.1,
+        size: 5 + Math.random()*6,
+        color: colors[i % colors.length],
+        rot: Math.random()*Math.PI,
+        vr: (Math.random()-0.5)*0.3,
+        life: 0
+      });
+    }
+    var start = performance.now();
+    function tick(t){
+      var elapsed = t - start;
+      cctx.clearRect(0,0,W,H);
+      particles.forEach(function(p){
+        p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
+        cctx.save();
+        cctx.translate(p.x,p.y);
+        cctx.rotate(p.rot);
+        cctx.fillStyle = p.color;
+        cctx.globalAlpha = Math.max(0, 1 - elapsed/2200);
+        cctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);
+        cctx.restore();
+      });
+      if(elapsed < 2200){
+        requestAnimationFrame(tick);
+      } else {
+        cctx.clearRect(0,0,W,H);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function easeOutQuint(x){ return 1 - Math.pow(1-x, 5); }
+
+  function spinWheel(){
+    if(spinning) return;
+    if(entries.length < 2){
+      showMsg(wheelMsg, 'Añade al menos 2 participantes para girar la ruleta.');
+      return;
+    }
+    showMsg(wheelMsg,'');
+    winnerBanner.classList.remove('show');
+    spinning = true;
+    spinBtn.disabled = true;
+    spinBtn.textContent = 'Girando…';
+
+    var n = entries.length;
+    var sliceDeg = 360/n;
+    var winnerIndex = Math.floor(Math.random()*n);
+    var midDeg = winnerIndex*sliceDeg + sliceDeg/2;
+    var pointerDeg = 270; // pointer fixed at top
+
+    var currentMod = ((rotation % 360) + 360) % 360;
+    var required = ((pointerDeg - midDeg) % 360 + 360) % 360;
+    var delta = ((required - currentMod) % 360 + 360) % 360;
+    var extraSpins = 5 + Math.floor(Math.random()*3);
+    var totalDelta = delta + 360*extraSpins;
+    var from = rotation;
+    var to = rotation + totalDelta;
+
+    var duration = reduced ? 500 : 4400;
+    var startTime = null;
+
+    function frame(t){
+      if(startTime === null) startTime = t;
+      var p = Math.min(1, (t-startTime)/duration);
+      var eased = easeOutQuint(p);
+      rotation = from + (to-from)*eased;
+      drawWheel(rotation);
+      if(p < 1){
+        requestAnimationFrame(frame);
+      } else {
+        rotation = to;
+        drawWheel(rotation);
+        finishSpin(winnerIndex);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function finishSpin(winnerIndex){
+    spinning = false;
+    spinBtn.disabled = false;
+    spinBtn.textContent = '🎡 Girar la ruleta';
+    var winner = entries[winnerIndex];
+    winnerNameEl.textContent = winner;
+    winnerBanner.classList.add('show');
+    launchConfetti();
+
+    winnersLog.push(winner);
+    historyBox.style.display = 'block';
+    var li = document.createElement('li');
+    li.textContent = winner;
+    historyList.appendChild(li);
+
+    if(eliminateBox.checked){
+      entries.splice(winnerIndex,1);
+      wheelInput.value = entries.join('\n');
+      wheelCountEl.textContent = entries.length + (entries.length===1 ? ' participante' : ' participantes');
+      if(entries.length === 0){
+        showMsg(wheelMsg, '¡Sorteo terminado! Todos los participantes han salido ya.');
+        spinBtn.disabled = true;
+      } else if(entries.length === 1){
+        showMsg(wheelMsg, 'Queda 1 participante: será el próximo en salir.');
+      }
+      drawWheel(rotation);
+    }
+  }
+
+  $('#wheel-update').addEventListener('click', syncWheelFromInput);
+  wheelInput.addEventListener('input', syncWheelFromInput);
+  $('#wheel-clear').addEventListener('click', function(){
+    wheelInput.value=''; winnersLog=[]; historyList.innerHTML=''; historyBox.style.display='none';
+    syncWheelFromInput();
+  });
+  $('#wheel-example').addEventListener('click', function(){
+    wheelInput.value = 'Ana\nLuis\nMarta\nCarlos\nSofía\nPablo\nElena\nDiego';
+    syncWheelFromInput();
+  });
+  spinBtn.addEventListener('click', spinWheel);
+
+  wheelInput.value = 'Ana\nLuis\nMarta\nCarlos\nSofía\nPablo';
+  syncWheelFromInput();
+
+  /* ================= EQUIPOS ================= */
+  var teamsInput = $('#teams-input');
+  var teamsCount = $('#teams-count');
+  var teamsNum = $('#teams-num');
+  var teamsNumHint = $('#teams-num-hint');
+  var teamsOut = $('#teams-out');
+  var teamsMsg = $('#teams-msg');
+
+  function teamsMode(){
+    var r = $$('input[name="teams-mode"]').filter(function(i){return i.checked;})[0];
+    return r ? r.value : 'count';
+  }
+
+  $$('input[name="teams-mode"]').forEach(function(r){
+    r.addEventListener('change', function(){
+      teamsNumHint.textContent = teamsMode()==='count' ? 'equipos en total' : 'personas por equipo';
+    });
+  });
+
+  function syncTeamsCount(){
+    var list = parseLines(teamsInput.value);
+    teamsCount.textContent = list.length + (list.length===1 ? ' participante' : ' participantes');
+    showMsg(teamsMsg,'');
+  }
+  teamsInput.addEventListener('input', syncTeamsCount);
+
+  $('#teams-example').addEventListener('click', function(){
+    teamsInput.value = 'Ana\nLuis\nMarta\nCarlos\nSofía\nPablo\nElena\nDiego\nLucía\nHugo';
+    syncTeamsCount();
+  });
+  $('#teams-clear').addEventListener('click', function(){
+    teamsInput.value=''; teamsOut.innerHTML = '<div class="hint">Pulsa «Formar equipos» para repartir a los participantes al azar.</div>';
+    syncTeamsCount();
+  });
+
+  function shuffle(arr){
+    var a = arr.slice();
+    for(var i=a.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var tmp=a[i]; a[i]=a[j]; a[j]=tmp;
+    }
+    return a;
+  }
+
+  $('#teams-shuffle').addEventListener('click', function(){
+    var people = parseLines(teamsInput.value);
+    var numVal = parseInt(teamsNum.value,10) || 2;
+    if(people.length < 2){
+      showMsg(teamsMsg, 'Añade al menos 2 participantes.');
+      return;
+    }
+    var numTeams;
+    if(teamsMode() === 'count'){
+      numTeams = Math.max(2, Math.min(numVal, people.length));
+      if(numVal > people.length) showMsg(teamsMsg, 'Hay menos participantes que equipos pedidos: se ajusta a ' + numTeams + '.');
+      else showMsg(teamsMsg,'');
+    } else {
+      var size = Math.max(1, numVal);
+      numTeams = Math.max(1, Math.ceil(people.length/size));
+      showMsg(teamsMsg,'');
+    }
+
+    var shuffled = shuffle(people);
+    var teams = [];
+    for(var i=0;i<numTeams;i++) teams.push([]);
+    shuffled.forEach(function(name, idx){
+      teams[idx % numTeams].push(name);
+    });
+
+    teamsOut.innerHTML = '';
+    teams.forEach(function(team, idx){
+      var card = document.createElement('div');
+      card.className = 'team-card';
+      var badge = document.createElement('div');
+      badge.className = 'badge';
+      badge.textContent = 'EQUIPO ' + String(idx+1).padStart(2,'0');
+      card.appendChild(badge);
+      var ol = document.createElement('ol');
+      team.forEach(function(name){
+        var li = document.createElement('li');
+        li.textContent = name;
+        ol.appendChild(li);
+      });
+      card.appendChild(ol);
+      teamsOut.appendChild(card);
+    });
+  });
+
+  teamsInput.value = 'Ana\nLuis\nMarta\nCarlos\nSofía\nPablo';
+  syncTeamsCount();
+
+  /* ================= MONEDA ================= */
+  var coin = $('#coin');
+  var coinRot = 0;
+  var headsN = 0, tailsN = 0;
+  var coinFlipping = false;
+
+  $('#coin-flip').addEventListener('click', function(){
+    if(coinFlipping) return;
+    coinFlipping = true;
+    var isHeads = Math.random() < 0.5;
+    var spins = 4 + Math.floor(Math.random()*3);
+    coinRot += spins*360 + (isHeads ? 0 : 180);
+    coin.style.transitionDuration = reduced ? '300ms' : '2200ms';
+    coin.style.transform = 'rotateY(' + coinRot + 'deg)';
+    setTimeout(function(){
+      coinFlipping = false;
+      if(isHeads){ headsN++; $('#coin-heads').textContent = headsN; }
+      else { tailsN++; $('#coin-tails').textContent = tailsN; }
+    }, reduced ? 320 : 2250);
+  });
+  $('#coin-reset').addEventListener('click', function(){
+    headsN=0; tailsN=0; $('#coin-heads').textContent='0'; $('#coin-tails').textContent='0';
+  });
+
+  /* ================= DADOS ================= */
+  var diceGlyphs = ['','⚀','⚁','⚂','⚃','⚄','⚅'];
+  var diceTray = $('#dice-tray');
+  var diceTotal = $('#dice-total');
+  var diceNum = $('#dice-num');
+
+  function renderDice(values, rolling){
+    diceTray.innerHTML = '';
+    values.forEach(function(v){
+      var d = document.createElement('div');
+      d.className = 'die' + (rolling ? ' rolling' : '');
+      d.textContent = diceGlyphs[v];
+      diceTray.appendChild(d);
+    });
+  }
+
+  $('#dice-roll').addEventListener('click', function(){
+    var n = Math.max(1, Math.min(6, parseInt(diceNum.value,10) || 1));
+    var values = [];
+    for(var i=0;i<n;i++) values.push(1 + Math.floor(Math.random()*6));
+    renderDice(values, true);
+    var sum = values.reduce(function(a,b){return a+b;},0);
+    setTimeout(function(){
+      renderDice(values, false);
+      diceTotal.innerHTML = 'Suma: <b>' + sum + '</b>';
+    }, reduced ? 50 : 480);
+  });
+
+  renderDice([3,5]);
+})();
+</script>
+</body>
+</html>
